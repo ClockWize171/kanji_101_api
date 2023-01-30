@@ -24,7 +24,8 @@ const kanjiSchema = new mongoose.Schema({
             message: "A incorrect_answer should be only 3 items"
         },
     }],
-})
+},
+    { versionKey: false })
 
 const Kanji = mongoose.model('Kanji', kanjiSchema);
 

@@ -1,8 +1,9 @@
 const catchAsync = require('../utils/catchAsync')
-const AppError = require('../utils/appError')
 const Kanji = require('../models/kanjiModel')
 const APIFeatures = require('../utils/apiFeatures')
 
+
+/// GET CONTROLLERS ///
 exports.getAllQuests = catchAsync(async (req, res, next) => {
     try {
         const totalItems = await Kanji.countDocuments();
@@ -23,6 +24,29 @@ exports.getAllQuests = catchAsync(async (req, res, next) => {
         res.status(500).json({
             status: 'fail',
             message: error.message
+        });
+    }
+});
+
+exports.getOneQuest = catchAsync(async (req, res, next) => {
+    const quest = await Kanji.findById(req.params.id);
+    if (quest === null) {
+        res.status(404).send({
+            status: 'fail',
+            message: "Quest not found!"
+        });
+    }
+    try {
+        res.status(200).json({
+            status: 'success',
+            data: {
+                quest
+            },
+        })
+    } catch (error) {
+        res.status(404).send({
+            status: 'fail',
+            message: "Quest not found!"
         });
     }
 });
@@ -74,3 +98,62 @@ exports.getN4Quests = catchAsync(async (req, res, next) => {
         });
     }
 });
+
+/// POST CONTROLLERS ///
+exports.createQuest = catchAsync(async (req, res, next) => {
+    try {
+        const newQuest = await Kanji.create(req.body)
+        res.status(201).json({
+            status: 'success',
+            data: { quest: newQuest }
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'fail',
+            message: error.message
+        })
+    }
+})
+
+
+/// PATCH CONTROLLERS ///
+exports.updateQuest = catchAsync(async (req, res, next) => {
+    try {
+        const quest = await Kanji.findByIdAndUpdate(req.params.id, req.body, {
+            new: true,
+            runValidators: false
+        });
+        res.status(200).json({
+            status: 'success',
+            data: { quest },
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'fail',
+            message: error.message
+        })
+    }
+})
+
+
+/// DELETE CONTROLLERS ///
+exports.deleteQuest = catchAsync(async (req, res, next) => {
+    const quest = await Kanji.findByIdAndDelete(req.params.id);
+    if (!quest) {
+        res.status(404).json({
+            status: 'fail',
+            message: 'This quest is not here!'
+        });
+    }
+    try {
+        res.status(201).json({
+            status: 'success',
+            data: 'Deleted successfully!'
+        })
+    } catch (error) {
+        res.status(500).json({
+            status: 'fail',
+            message: error.message
+        })
+    }
+})

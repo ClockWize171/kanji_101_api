@@ -8,6 +8,7 @@ const DB = process.env.MONGO_URL.replace(
     process.env.MONGO_PASSWORD
 );
 
+mongoose.set("strictQuery", false);
 mongoose
     // .connect(process.env.MONGO_LOCAL, {
     .connect(DB, {
