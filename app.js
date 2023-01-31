@@ -4,13 +4,16 @@ const morgan = require('morgan');
 const mongoSanitize = require('express-mongo-sanitize');
 const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
-
+const favicon = require('serve-favicon')
+const path = require('path')
 const AppError = require('./utils/appError')
 const kanjiRoute = require('./routes/kanjiRoute');
 
 const app = express();
+
 app.use(helmet());
 
+app.use(favicon(path.join(__dirname, 'public', 'images', 'torii-gate.png')));
 
 if (process.env.NODE_ENV === 'development') {
     app.use(morgan('dev'));
